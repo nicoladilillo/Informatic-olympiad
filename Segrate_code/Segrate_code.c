@@ -1,20 +1,22 @@
 # include <stdlib.h>
+# include <stdio.h>
+# include <ctype.h>
 
-int n;
+int N;
 char buffer[100];
 char vocali[]="aeiouy";
 char vocaliCambiate[]="eiouya";
 char consonanti[]="bcdfghjklmnpqrstvwxz";
 char consonantiCambiate[]="cdfghjklmnpqrstvwxzb";
 
-int vocali(char c) {
+int vocale(char c) {
     return (c=='a' || c=='e' || c=='i' || c=='o' || c=='u' || c=='y');
 }
 
 char traduciVocali(char c) {
 	int i;
-	for (i=0; i<n; i++)
-		if (c==vocali[i]) return vocaliCambiate;
+	for (i=0; i<6; i++)
+		if (c==vocali[i]) return vocaliCambiate[i];
 }
 
 char TraduciConsonanti(char c){
@@ -36,20 +38,35 @@ int main()
 	for (i=0; i<N; i++)
 	{
 		fgets(buffer,81,in);
-		for (j=0; buffer[i]!='\0'; i++)
+		for (j=0; buffer[j]!='\0'; j++)
 		{
+			//printf("%c",buffer[i]);
 			int flag=0;
-			char temp, c=tlower(buffer[i]);
-			if (c!=buffer[i]) flag=1;
+			char temp, c=tolower(buffer[j]);
+			//printf("%c",c);
+			
+			if (c!=buffer[j]) flag=1;
 			if (isalpha(c))
 			{
-				if (vocale(c)) temp=traduciVocali(c);
-				else           temp=TraduciConsonanti(c);
+				if (vocale(c)) {
+					printf("vocale: ");
+					temp=traduciVocali(c);
+					printf("%c\n",temp);
+				}
+				else{
+				    temp=TraduciConsonanti(c);
+			    }
+				//printf("%c",temp);
 
 				if (flag) temp=toupper(temp);
-
+				
+				fprintf(out,"%c",temp);
 			}
+			else if (isdigit(c)) fprintf(out,"%d",((c-'0')+1)%10);
+			else fprintf(out,"%c",c);
 		}
 	}
+	
+	return 0;
 
 }
