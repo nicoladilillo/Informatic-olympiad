@@ -15,8 +15,8 @@ int main() {
 	freopen("output.txt", "w", stdout);
 	int N;
 	string segni;
-	cin >> N >> segni;
-	vector <int> permutazione(N);
+	std::cin >> N >> segni;
+	std::vector <int> permutazione(N);
 
 	// permutazione = {1, 2, 3, ...}
 	iota(permutazione.begin(), permutazione.end(), 1);
