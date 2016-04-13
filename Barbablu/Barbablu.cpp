@@ -14,6 +14,8 @@ int d[MAX];  //distanze minimine di ogni punto
 int u[MAX];  //indica la sorgente del nodo
 bool v[MAX]; //indica se il nodo è stato verificato
 
+int respiro[MAX]; //valore che porta il conto dei metri fatti in apnea
+
 int N;  //numero cabine
 int M;  //numero corridoi
 int C;  //cabina del tesoro
@@ -29,9 +31,9 @@ main() {
 	in >> N >> M >> C >> K;
 	//std::cout << N  << ' ' << M << ' '  << C << ' '  << K;
 
-	std::fill (d, d+N, INT_MAX);
-	std::fill (u, u+N, -1);
-	std::fill (v, v+N, false);
+	std::fill (d, d+N+1, INT_MAX);
+	std::fill (u, u+N+1, -1);
+	std::fill (v, v+N+1, false);
 	
 	int i;	
 	//cabine con l'aria
@@ -39,7 +41,7 @@ main() {
 		int p;
 		in >> p;
 		aria[p] = true;
-		//std::cout << aria[p] << '\t';
+		//std::cout << p << '\t';
 	}
 
 	int da;
@@ -63,19 +65,29 @@ main() {
 
 	int j = 1; //provenienza cammino minimo
 	int minD;  //valore cammino minimo
+	respiro[1] = 0;
 	while ( true ) {
 		//assegnazione etichette provvisorie
 		for ( std::list <arc>::iterator it = adiacenze[j].begin(); it != adiacenze[j].end(); it++ ) { 
-			if ( d[it->n]>(d[j]+it->w) ) {
+			if ( d[it->n]>(d[j]+it->w) || respiro[it->n]>20 ) {
+				//std::cout << d[it->n] << '\t';
 				d[it->n] = d[j]+it->w;
+				//std::cout << d[it->n] << '\t';
 				u[it->n] = j;
+				//std::cout << u[it->n] << '\t';
+			    respiro[it->n] = respiro[j] + it->w;
+				//std::cout << "respiro " << respiro[it->n] << '\n';
 			}
 		} 
 
 		minD = INT_MAX;
 		//assegnazione etichetta permanente
 		for ( i=1; i<=N; i++) { 
-			if ( !v[i] && d[i]<minD ) {
+			if ( !v[i] && d[i]<minD && respiro[i]<=20 ) {
+				if ( aria[i]==true ) {
+					//std::cout << "ARIA AZZERATA NEL NODO " << i << '\n';
+					respiro[i] = 0;
+				}
 				minD = d[i];
 				j = i;
 			}
@@ -90,6 +102,10 @@ main() {
 
 	}
 
-	out << d[C] << std::endl;
+	if ( minD==INT_MAX )
+		out << -1 << std::endl;
+	else
+		out << d[C] << std::endl;
+
 
 }
